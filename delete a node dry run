@@ -1,0 +1,151 @@
+Sure! Here’s the breakdown of the `deleteNode` function with each code segment aligned to each step in the explanation, along with tree diagrams for better visualization.
+
+---
+
+### **Step 1: Base Case and Recursive Call**
+
+- **Code**:
+  ```cpp
+  if (root) 
+      if (key < root->val) root->left = deleteNode(root->left, key);  
+      else if (key > root->val) root->right = deleteNode(root->right, key);
+  ```
+- **Explanation**: This code checks whether to move left or right in the tree to find the node with the `key` value.
+- **Diagram**: Starting from root, we look for the node with the value `10` (target key).
+  
+  **Tree**:
+  ```
+         10
+        /  \
+       5    15
+      / \     \
+     3   7     18
+  ```
+
+Since `key` (10) matches `root->val`, we move to the next steps.
+
+---
+
+### **Step 2: Node with No Children**
+
+This step doesn't apply in our example since the node `10` has both left and right children. If we were at a node with no children, we would delete it by returning `NULL`.
+
+- **Code**:
+  ```cpp
+  if (!root->left && !root->right) return NULL;
+  ```
+
+No tree changes occur in this step since it does not apply to our case.
+
+---
+
+### **Step 3: Node with One Child**
+
+This step also doesn’t apply because node `10` has two children. However, if we encountered a node with only one child, we would replace it with its child.
+
+- **Code**:
+  ```cpp
+  if (!root->left || !root->right)
+      return root->left ? root->left : root->right;
+  ```
+
+No tree changes occur here as well, as this condition is also not met.
+
+---
+
+### **Step 4: Node with Two Children**
+
+Since node `10` has two children, we follow this step to handle the deletion properly. Here’s how this is done:
+
+1. **Finding the Maximum Node in the Left Subtree**:
+   - **Code**:
+     ```cpp
+     TreeNode* temp = root->left;
+     while (temp->right != NULL) temp = temp->right;
+     ```
+   - **Explanation**: Start at `root->left` (node `5`), then move to `5`'s right child `7`, which is the maximum node in the left subtree.
+   - **Diagram**:
+     ```
+           10
+          /  \
+         5    15
+        / \     \
+       3   7     18
+     ```
+
+2. **Replacing Node `10` with `7`**:
+   - **Code**:
+     ```cpp
+     root->val = temp->val;
+     ```
+   - **Explanation**: We replace the value of node `10` with the value `7`.
+   - **Updated Tree**:
+     ```
+           7
+          /  \
+         5    15
+        / \     \
+       3   7     18
+     ```
+
+3. **Deleting the Node with Value `7` in the Left Subtree**:
+   - **Code**:
+     ```cpp
+     root->left = deleteNode(root->left, temp->val);
+     ```
+   - **Explanation**: Now, we delete the duplicate `7` node in the left subtree. Since this `7` node has no children, we remove it by returning `NULL`.
+   - **Final Tree**:
+     ```
+           7
+          /  \
+         5    15
+        /       \
+       3         18
+     ```
+
+---
+
+### **Step 5: Return the Updated Root**
+
+- **Code**:
+  ```cpp
+  return root;
+  ```
+- **Explanation**: Finally, we return the modified root of the tree after deletion is completed.
+
+---
+
+### **Complete Code with Explanation**:
+
+```cpp
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        // Step 1: Traverse the tree to find the node with the key
+        if (root) {
+            if (key < root->val) 
+                root->left = deleteNode(root->left, key);  // Go left
+            else if (key > root->val) 
+                root->right = deleteNode(root->right, key); // Go right
+            else {
+                // Step 2: Node with no children (leaf node)
+                if (!root->left && !root->right) return NULL;
+                
+                // Step 3: Node with only one child
+                if (!root->left || !root->right) 
+                    return root->left ? root->left : root->right;
+                
+                // Step 4: Node with two children
+                TreeNode* temp = root->left;
+                while (temp->right != NULL) temp = temp->right; // Find max in left subtree
+                root->val = temp->val; // Replace with max value in left subtree
+                root->left = deleteNode(root->left, temp->val); // Delete the duplicate node
+            }
+        }
+        // Step 5: Return updated root
+        return root;
+    }
+};
+```
+
+This breakdown with diagrams for each step provides a clear view of how each part of the code contributes to the final deletion process.
